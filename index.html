@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShaQR QR Code Generator</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FFD60A' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><rect x='3' y='3' width='18' height='18' rx='4' ry='4'></rect><rect x='7' y='7' width='3' height='3'></rect><rect x='14' y='7' width='3' height='3'></rect><rect x='7' y='14' width='3' height='3'></rect><rect x='14' y='14' width='3' height='3'></rect></svg>">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <script src="https://unpkg.com/qr-code-styling@1.6.0-rc.1/lib/qr-code-styling.js"></script>
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  
+  <header class="app-header">
+    <div class="logo">
+      <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="#FFD60A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="4" ry="4"></rect>
+        <rect x="7" y="7" width="3" height="3"></rect>
+        <rect x="14" y="7" width="3" height="3"></rect>
+        <rect x="7" y="14" width="3" height="3"></rect>
+        <rect x="14" y="14" width="3" height="3"></rect>
+      </svg>
+      <h1>ShaQR</h1>
+    </div>
+  </header>
+
+  <main class="workspace">
+    
+    <!-- Left Column: Inputs & Colors -->
+    <div class="controls-col">
+      
+      <!-- Segmented Tab Control (URL and Contact Only) -->
+      <div class="segmented-control main-tabs">
+        <button class="seg-btn active" data-mode="url">URL</button>
+        <button class="seg-btn" data-mode="vcard">Contact</button>
+        <div class="seg-indicator" id="main-indicator"></div>
+      </div>
+
+      <!-- Input Area -->
+      <div class="inputs-area">
+        
+        <div class="mode-panel active" id="mode-url">
+          <input type="url" id="url-val" class="apple-input" placeholder="https://apple.com" autocomplete="off" spellcheck="false">
+        </div>
+        
+        <div class="mode-panel" id="mode-vcard">
+          <div class="vcard-grid yellow-box">
+            <input type="text" id="vcard-fn" class="apple-input dark-text" placeholder="Full Name">
+            <input type="text" id="vcard-title" class="apple-input dark-text" placeholder="Job Title">
+            <input type="tel" id="vcard-tel" class="apple-input dark-text" placeholder="Phone Number">
+            <input type="email" id="vcard-email" class="apple-input dark-text" placeholder="Email Address">
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Combined Color Configs in One High-Impact Yellow Box -->
+      <div class="colors-area">
+        <div class="color-box">
+          
+          <!-- Design Theme Selector -->
+          <div class="segmented-control theme-toggle" id="theme-toggle">
+            <button class="seg-btn active" data-val="modern">Modern Pro</button>
+            <button class="seg-btn" data-val="formal">Classic Formal</button>
+            <div class="seg-indicator" id="theme-indicator"></div>
+          </div>
+
+          <div class="color-split" id="color-customization">
+            
+            <!-- QR Section -->
+            <div class="color-section">
+              <div class="color-box-header">
+                <h3>QR CODE</h3>
+                <div class="toggle-switch" id="qr-fill-type" data-state="gradient">
+                  <div class="toggle-bg"></div>
+                  <button class="toggle-btn" data-val="solid">Solid</button>
+                  <button class="toggle-btn active" data-val="gradient">Gradient</button>
+                </div>
+              </div>
+              <div class="color-picker-row">
+                <input type="color" id="qr-color-1" value="#FF512F" title="Primary Color">
+                <input type="color" id="qr-color-2" value="#FFD60A" class="grad-only" title="Secondary Color">
+              </div>
+            </div>
+
+            <!-- BG Section -->
+            <div class="color-section">
+              <div class="color-box-header">
+                <h3>BACKGROUND</h3>
+                <div class="toggle-switch" id="bg-fill-type" data-state="solid">
+                  <div class="toggle-bg"></div>
+                  <button class="toggle-btn active" data-val="solid">Solid</button>
+                  <button class="toggle-btn" data-val="gradient">Gradient</button>
+                </div>
+              </div>
+              <div class="color-picker-row">
+                <input type="color" id="bg-color-1" value="#000000" title="Primary Color">
+                <input type="color" id="bg-color-2" value="#1C1C1E" class="grad-only" style="display:none;" title="Secondary Color">
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Output & 3D Preview -->
+    <div class="preview-col">
+      <div class="qr-3d-wrapper">
+        <div id="qr-canvas"></div>
+      </div>
+      
+      <div class="action-row">
+        <button id="btn-dl" class="apple-btn primary">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          Download
+        </button>
+      </div>
+    </div>
+    
+  </main>
+
+  <!-- Comments Section -->
+  <section class="comments-section">
+    <div class="comments-header">
+      <h2>User Feedback</h2>
+    </div>
+    
+    <div class="comments-layout">
+      <!-- Comment Form -->
+      <div class="comment-form-box">
+        <h3>Leave a Review</h3>
+        <div class="heart-rating" id="heart-rating">
+          <svg class="heart-icon" viewBox="0 0 24 24" fill="var(--accent)" stroke="var(--accent)" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+          <svg class="heart-icon" viewBox="0 0 24 24" fill="var(--accent)" stroke="var(--accent)" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+          <svg class="heart-icon" viewBox="0 0 24 24" fill="var(--accent)" stroke="var(--accent)" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+          <svg class="heart-icon" viewBox="0 0 24 24" fill="var(--accent)" stroke="var(--accent)" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+          <svg class="heart-icon" viewBox="0 0 24 24" fill="var(--accent)" stroke="var(--accent)" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+        </div>
+        <input type="text" id="comment-name" class="apple-input" placeholder="Your Name (Optional)" style="margin-bottom: -0.25rem;">
+        <textarea id="comment-text" class="apple-input" placeholder="What do you think of ShaQR?"></textarea>
+        <button id="btn-submit-comment" class="apple-btn outline-btn">Submit Review</button>
+      </div>
+      
+      <!-- Comments List -->
+      <div class="comments-list" id="comments-list">
+        <!-- New comments will dynamically populate here -->
+      </div>
+    </div>
+  </section>
+  
+  <div id="toast-container"></div>
+  <script src="app.js"></script>
+</body>
+</html>
